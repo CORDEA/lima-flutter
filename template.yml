@@ -1,0 +1,28 @@
+vmType: "vz"
+images:
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+  arch: "x86_64"
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+mounts:
+- location: "~"
+- location: "/tmp/lima"
+  writable: true
+mountType: "virtiofs"
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    apt-get update
+    apt-get install -y git unzip
+- mode: user
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    rm -rf /tmp/lima/flutter
+    git clone --depth 1 https://github.com/flutter/flutter.git /tmp/lima/flutter
+    /tmp/lima/flutter/bin/flutter doctor
+message: |
+  To use flutter:
+  export PATH="${PATH}:/tmp/lima/flutter/bin/"
